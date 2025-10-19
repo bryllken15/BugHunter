@@ -8,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Badge } from '@/components/ui/Badge'
-import { createClient } from '@/lib/supabase'
+import { createSupabaseClient } from '@/lib/supabase'
 import { User, UserProgress } from '@/types'
+import { PageLoading, CardSkeleton } from '@/components/LoadingSpinner'
 import { 
   Target, 
   Trophy, 
@@ -28,7 +29,7 @@ export default function DashboardPage() {
   const [userProgress, setUserProgress] = useState<UserProgress[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = createSupabaseClient()
 
   useEffect(() => {
     const getUser = async () => {
@@ -44,7 +45,7 @@ export default function DashboardPage() {
         display_name: user.user_metadata?.display_name,
         skill_level: user.user_metadata?.skill_level,
         created_at: user.created_at,
-        updated_at: user.updated_at
+        updated_at: user.updated_at || user.created_at
       })
       
       // Fetch user progress
@@ -64,16 +65,7 @@ export default function DashboardPage() {
   }, [router, supabase])
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-sm">BH</span>
-          </div>
-          <p className="text-gray-600">Loading your dashboard...</p>
-        </div>
-      </div>
-    )
+    return <PageLoading message="Loading your dashboard..." />
   }
 
   if (!user) {
@@ -119,7 +111,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <Header user={user} />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">

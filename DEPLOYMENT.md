@@ -1,207 +1,208 @@
 # Bug Hunter - Deployment Guide
 
-## 🚀 Quick Deployment to Netlify
+## Prerequisites
 
-### Prerequisites
-- GitHub repository with your code
-- Supabase project set up
-- Google Gemini API key
-- Netlify account
+Before deploying Bug Hunter, make sure you have:
 
-### Step 1: Database Setup
+1. **Supabase Account**: Create a new project at [supabase.com](https://supabase.com)
+2. **Google Gemini API Key**: Get your API key from [Google AI Studio](https://aistudio.google.com)
+3. **Netlify Account**: Sign up at [netlify.com](https://netlify.com)
+4. **GitHub Repository**: Push your code to GitHub
 
-1. **Create Supabase Project**
-   - Go to [supabase.com](https://supabase.com)
-   - Create a new project
-   - Note down your project URL and anon key
+## Environment Variables
 
-2. **Run Database Schema**
-   - Go to your Supabase project dashboard
-   - Navigate to SQL Editor
-   - Copy and paste the contents of `supabase-schema.sql`
-   - Run the SQL script
-
-### Step 2: Environment Variables
-
-Create these environment variables in your Netlify dashboard:
+Create a `.env.local` file in your project root with the following variables:
 
 ```env
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# AI Configuration
 GEMINI_API_KEY=your-gemini-api-key
-NEXT_PUBLIC_APP_URL=https://your-app.netlify.app
+
+# App Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### Step 3: Deploy to Netlify
+## Database Setup
 
-1. **Connect Repository**
-   - Go to [netlify.com](https://netlify.com)
+1. Go to your Supabase project dashboard
+2. Navigate to the SQL Editor
+3. Copy and paste the contents of `supabase-schema.sql`
+4. Run the SQL script to create all tables and policies
+
+## Deployment Steps
+
+### 1. Netlify Deployment
+
+1. **Connect Repository**:
+   - Go to [Netlify Dashboard](https://app.netlify.com)
    - Click "New site from Git"
    - Connect your GitHub repository
 
-2. **Configure Build Settings**
+2. **Build Settings**:
    - Build command: `npm run build`
    - Publish directory: `.next`
    - Node version: 18
 
-3. **Add Environment Variables**
+3. **Environment Variables**:
    - Go to Site settings > Environment variables
-   - Add all the environment variables listed above
+   - Add all the environment variables from your `.env.local` file
+   - Update `NEXT_PUBLIC_APP_URL` to your Netlify URL
 
-4. **Deploy**
+4. **Deploy**:
    - Click "Deploy site"
-   - Wait for build to complete
-   - Your app will be available at `https://your-app.netlify.app`
+   - Wait for the build to complete
 
-### Step 4: Verify Deployment
+### 2. Domain Configuration (Optional)
 
-1. **Test Authentication**
-   - Try registering a new account
-   - Test login/logout functionality
+1. Go to Site settings > Domain management
+2. Add your custom domain
+3. Configure DNS settings as instructed by Netlify
 
-2. **Test Database Connection**
-   - Check if user data is being saved
-   - Verify progress tracking works
+### 3. SSL Certificate
 
-3. **Test AI Integration**
-   - Try generating a challenge
-   - Verify AI responses are working
+Netlify automatically provides SSL certificates for all sites. Your site will be available at `https://your-site-name.netlify.app`
 
-## 🔧 Local Development
+## Post-Deployment Checklist
 
-### Setup
-```bash
-# Install dependencies
-npm install
+- [ ] Site loads correctly
+- [ ] Authentication works (login/register)
+- [ ] Database connection is working
+- [ ] AI challenge generation is functional
+- [ ] PWA features work (install prompt, offline support)
+- [ ] Mobile responsive design
+- [ ] All pages are accessible
 
-# Create environment file
-cp .env.example .env.local
-
-# Add your environment variables to .env.local
-# Start development server
-npm run dev
-```
-
-### Environment Variables for Local Development
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-GEMINI_API_KEY=your-gemini-api-key
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-1. **Build Fails on Netlify**
-   - Check Node.js version (should be 18)
-   - Verify all dependencies are in package.json
+1. **Build Failures**:
+   - Check that all environment variables are set
+   - Ensure Node.js version is 18
    - Check build logs for specific errors
 
-2. **Database Connection Issues**
+2. **Database Connection Issues**:
    - Verify Supabase URL and keys are correct
-   - Check if RLS policies are set up correctly
+   - Check that RLS policies are properly configured
    - Ensure database schema is created
 
-3. **AI API Not Working**
-   - Verify Gemini API key is correct
-   - Check API quotas and limits
-   - Test API calls in browser console
+3. **AI Integration Issues**:
+   - Verify Gemini API key is valid
+   - Check API rate limits
+   - Ensure API key has proper permissions
 
-4. **Authentication Issues**
-   - Check Supabase auth settings
-   - Verify redirect URLs are configured
-   - Test with different browsers
+4. **PWA Issues**:
+   - Check that manifest.json is accessible
+   - Verify service worker is registered
+   - Test offline functionality
 
-### Debug Steps
+### Performance Optimization
 
-1. **Check Browser Console**
-   - Look for JavaScript errors
-   - Check network requests
-   - Verify API responses
+1. **Image Optimization**:
+   - Use Next.js Image component
+   - Optimize images before upload
+   - Use appropriate image formats (WebP, AVIF)
 
-2. **Check Netlify Logs**
-   - Go to Functions tab in Netlify dashboard
-   - Check function logs for errors
-   - Verify environment variables
+2. **Code Splitting**:
+   - Implement dynamic imports for heavy components
+   - Lazy load Monaco Editor
+   - Use React.lazy for route-based splitting
 
-3. **Test Database Connection**
-   - Use Supabase dashboard to verify data
-   - Check if tables exist
-   - Test RLS policies
+3. **Caching**:
+   - Configure proper cache headers
+   - Use CDN for static assets
+   - Implement service worker caching
 
-## 📊 Monitoring
+## Monitoring
 
-### Netlify Analytics
-- Enable Netlify Analytics in dashboard
-- Monitor page views and user behavior
-- Check performance metrics
+1. **Analytics**:
+   - Set up Google Analytics
+   - Monitor user engagement
+   - Track conversion rates
 
-### Supabase Monitoring
-- Use Supabase dashboard for database monitoring
-- Check API usage and limits
-- Monitor authentication events
+2. **Error Tracking**:
+   - Use Sentry for error monitoring
+   - Set up alerts for critical errors
+   - Monitor performance metrics
 
-## 🔄 Updates and Maintenance
+3. **Uptime Monitoring**:
+   - Use services like UptimeRobot
+   - Set up alerts for downtime
+   - Monitor response times
 
-### Updating the App
-1. Push changes to GitHub
-2. Netlify will automatically redeploy
-3. Test the new version
-4. Monitor for any issues
+## Security
 
-### Database Migrations
-1. Update SQL schema if needed
-2. Run migrations in Supabase SQL Editor
-3. Test with existing data
-4. Update application code if needed
+1. **Environment Variables**:
+   - Never commit `.env.local` to version control
+   - Use Netlify's environment variable system
+   - Rotate API keys regularly
 
-## 🎯 Performance Optimization
+2. **Database Security**:
+   - Enable RLS policies
+   - Use service role key only on server
+   - Monitor database access logs
 
-### Build Optimization
-- Enable Netlify's build caching
-- Use Next.js Image optimization
-- Minimize bundle size
-- Enable compression
+3. **API Security**:
+   - Implement rate limiting
+   - Validate all inputs
+   - Use HTTPS for all requests
 
-### Database Optimization
-- Add indexes for frequently queried columns
-- Use connection pooling
-- Monitor query performance
-- Optimize RLS policies
+## Scaling
 
-## 🔒 Security
+1. **Database Scaling**:
+   - Monitor database performance
+   - Consider read replicas for heavy traffic
+   - Implement connection pooling
 
-### Environment Variables
-- Never commit `.env` files
-- Use Netlify's environment variable encryption
-- Rotate API keys regularly
-- Use least privilege principle
+2. **CDN**:
+   - Use Netlify's CDN for static assets
+   - Consider Cloudflare for additional performance
+   - Implement edge caching
 
-### Database Security
-- Enable RLS on all tables
-- Use service role key only for server-side operations
-- Monitor for suspicious activity
-- Regular security audits
+3. **Serverless Functions**:
+   - Monitor function execution times
+   - Optimize cold start times
+   - Consider function warming strategies
 
-## 📱 Mobile Deployment
+## Backup Strategy
 
-### PWA Features
-- App manifest is included
-- Service worker for offline functionality
-- Installable on mobile devices
-- Optimized for mobile performance
+1. **Database Backups**:
+   - Enable automatic backups in Supabase
+   - Test restore procedures
+   - Store backups in multiple locations
 
-### Mobile Testing
-- Test on various devices
-- Check touch interactions
-- Verify responsive design
-- Test offline functionality
+2. **Code Backups**:
+   - Use Git for version control
+   - Create regular releases
+   - Document deployment procedures
 
----
+## Support
 
-**Your Bug Hunter app should now be live and ready for users! 🎉**
+For deployment issues:
+
+1. Check Netlify build logs
+2. Review Supabase logs
+3. Test locally with production environment variables
+4. Check browser console for client-side errors
+5. Verify all API endpoints are working
+
+## Updates and Maintenance
+
+1. **Regular Updates**:
+   - Keep dependencies updated
+   - Monitor security advisories
+   - Test updates in staging environment
+
+2. **Performance Monitoring**:
+   - Use Lighthouse for performance audits
+   - Monitor Core Web Vitals
+   - Optimize based on real user metrics
+
+3. **Feature Rollouts**:
+   - Use feature flags for gradual rollouts
+   - Monitor user feedback
+   - A/B test new features

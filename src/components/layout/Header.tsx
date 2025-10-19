@@ -6,10 +6,12 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Trophy, Home, Target, BarChart3, Settings, User } from 'lucide-react'
+import { MobileNavigation } from './MobileNavigation'
 
 interface HeaderProps {
   user?: {
     id: string
+    email: string
     display_name?: string
     total_xp?: number
     current_level?: number
@@ -41,7 +43,7 @@ export function Header({ user }: HeaderProps) {
           </div>
           
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav id="navigation" className="hidden md:flex space-x-8" role="navigation" aria-label="Main navigation">
             {navigation.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
@@ -55,8 +57,9 @@ export function Header({ user }: HeaderProps) {
                       ? 'text-primary-600 bg-primary-50'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
+                  aria-current={isActive ? 'page' : undefined}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" aria-hidden="true" />
                   <span>{item.name}</span>
                 </Link>
               )
@@ -88,7 +91,7 @@ export function Header({ user }: HeaderProps) {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/login">Login</Link>
                 </Button>
@@ -97,6 +100,9 @@ export function Header({ user }: HeaderProps) {
                 </Button>
               </div>
             )}
+            
+            {/* Mobile Navigation */}
+            <MobileNavigation user={user} />
           </div>
         </div>
       </div>
