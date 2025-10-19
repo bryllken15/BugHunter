@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 // Lazy initialization to avoid build-time errors
 let _supabase: any = null
@@ -45,7 +44,8 @@ export const createSupabaseClient = () => {
   }
   
   try {
-    return createClientComponentClient()
+    // Use direct createClient instead of createClientComponentClient to avoid build issues
+    return createClient(url, key)
   } catch (error) {
     console.warn('Failed to create Supabase client component:', error)
     return null
