@@ -89,6 +89,11 @@ export async function updateUserProgress(
   challengeCompleted: boolean = true
 ): Promise<UserProgress> {
   try {
+    // Check if Supabase is configured
+    if (!supabase) {
+      throw new Error('Database not configured. Please set up environment variables.')
+    }
+
     // Get current progress
     const { data: currentProgress, error: fetchError } = await supabase
       .from('user_progress')
@@ -181,6 +186,11 @@ export async function updateUserProgress(
 
 export async function checkAndAwardAchievements(userId: string): Promise<UserAchievement[]> {
   try {
+    // Check if Supabase is configured
+    if (!supabase) {
+      throw new Error('Database not configured. Please set up environment variables.')
+    }
+
     // Get user's total stats
     const { data: userProgress, error: progressError } = await supabase
       .from('user_progress')
@@ -285,6 +295,11 @@ export async function checkAndAwardAchievements(userId: string): Promise<UserAch
 
 export async function getUserStats(userId: string) {
   try {
+    // Check if Supabase is configured
+    if (!supabase) {
+      throw new Error('Database not configured. Please set up environment variables.')
+    }
+
     const { data: progress, error: progressError } = await supabase
       .from('user_progress')
       .select('*')
