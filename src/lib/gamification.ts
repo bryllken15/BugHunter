@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { getSupabase } from './supabase'
 
 export interface UserProgress {
   user_id: string
@@ -90,6 +90,7 @@ export async function updateUserProgress(
 ): Promise<UserProgress> {
   try {
     // Check if Supabase is configured
+    const supabase = getSupabase()
     if (!supabase) {
       throw new Error('Database not configured. Please set up environment variables.')
     }
@@ -187,6 +188,7 @@ export async function updateUserProgress(
 export async function checkAndAwardAchievements(userId: string): Promise<UserAchievement[]> {
   try {
     // Check if Supabase is configured
+    const supabase = getSupabase()
     if (!supabase) {
       throw new Error('Database not configured. Please set up environment variables.')
     }
@@ -199,9 +201,9 @@ export async function checkAndAwardAchievements(userId: string): Promise<UserAch
 
     if (progressError) throw progressError
 
-    const totalXP = userProgress?.reduce((sum, p) => sum + p.total_xp, 0) || 0
-    const totalChallenges = userProgress?.reduce((sum, p) => sum + p.challenges_completed, 0) || 0
-    const maxStreak = Math.max(...(userProgress?.map(p => p.streak_days) || [0]))
+    const totalXP = userProgress?.reduce((sum: number, p: UserProgress) => sum + p.total_xp, 0) || 0
+    const totalChallenges = userProgress?.reduce((sum: number, p: UserProgress) => sum + p.challenges_completed, 0) || 0
+    const maxStreak = Math.max(...(userProgress?.map((p: UserProgress) => p.streak_days) || [0]))
     const currentLevel = calculateLevel(totalXP)
 
     // Get all achievements
@@ -219,7 +221,7 @@ export async function checkAndAwardAchievements(userId: string): Promise<UserAch
 
     if (userAchievementsError) throw userAchievementsError
 
-    const earnedAchievementIds = new Set(userAchievements?.map(ua => ua.achievement_id) || [])
+    const earnedAchievementIds = new Set(userAchievements?.map((ua: any) => ua.achievement_id) || [])
     const newAchievements: UserAchievement[] = []
 
     // Check each achievement
@@ -233,13 +235,13 @@ export async function checkAndAwardAchievements(userId: string): Promise<UserAch
           shouldAward = totalChallenges >= 1
           break
         case 'HTML Master':
-          shouldAward = userProgress?.find(p => p.course_type === 'html')?.challenges_completed >= 10
+          shouldAward = userProgress?.find((p: UserProgress) => p.course_type === 'html')?.challenges_completed >= 10
           break
         case 'CSS Wizard':
-          shouldAward = userProgress?.find(p => p.course_type === 'css')?.challenges_completed >= 10
+          shouldAward = userProgress?.find((p: UserProgress) => p.course_type === 'css')?.challenges_completed >= 10
           break
         case 'JavaScript Jedi':
-          shouldAward = userProgress?.find(p => p.course_type === 'javascript')?.challenges_completed >= 10
+          shouldAward = userProgress?.find((p: UserProgress) => p.course_type === 'javascript')?.challenges_completed >= 10
           break
         case 'Learning Legend':
           shouldAward = currentLevel >= 5
@@ -296,6 +298,7 @@ export async function checkAndAwardAchievements(userId: string): Promise<UserAch
 export async function getUserStats(userId: string) {
   try {
     // Check if Supabase is configured
+    const supabase = getSupabase()
     if (!supabase) {
       throw new Error('Database not configured. Please set up environment variables.')
     }
@@ -317,10 +320,10 @@ export async function getUserStats(userId: string) {
 
     if (achievementsError) throw achievementsError
 
-    const totalXP = progress?.reduce((sum, p) => sum + p.total_xp, 0) || 0
-    const totalChallenges = progress?.reduce((sum, p) => sum + p.challenges_completed, 0) || 0
+    const totalXP = progress?.reduce((sum: number, p: UserProgress) => sum + p.total_xp, 0) || 0
+    const totalChallenges = progress?.reduce((sum: number, p: UserProgress) => sum + p.challenges_completed, 0) || 0
     const currentLevel = calculateLevel(totalXP)
-    const maxStreak = Math.max(...(progress?.map(p => p.streak_days) || [0]))
+    const maxStreak = Math.max(...(progress?.map((p: UserProgress) => p.streak_days) || [0]))
 
     return {
       totalXP,
