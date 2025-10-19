@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const geminiApiKey = process.env.GEMINI_API_KEY || 'placeholder-key'
+const genAI = geminiApiKey === 'placeholder-key' ? null : new GoogleGenerativeAI(geminiApiKey)
 
 export interface ChallengeRequest {
   skill_level: 'beginner' | 'intermediate' | 'advanced'
@@ -27,6 +28,12 @@ export interface GeneratedChallenge {
 
 export async function generateChallenge(request: ChallengeRequest): Promise<GeneratedChallenge> {
   try {
+    // Check if Gemini API is configured
+    if (!genAI) {
+      console.warn('Gemini API not configured, using fallback challenge')
+      return getFallbackChallenge(request.course_type, request.skill_level)
+    }
+
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
     
     const prompt = `
@@ -228,6 +235,21 @@ export async function validateSolution(
   courseType: string
 ): Promise<{ isValid: boolean; feedback: string }> {
   try {
+    // Check if Gemini API is configured
+    if (!genAI) {
+      console.warn('Gemini API not configured, using fallback validation')
+      // Fallback to simple string comparison
+      const normalizedUser = userCode.replace(/\s+/g, '').toLowerCase()
+      const normalizedSolution = solution.replace(/\s+/g, '').toLowerCase()
+      
+      return {
+        isValid: normalizedUser === normalizedSolution,
+        feedback: normalizedUser === normalizedSolution 
+          ? 'Great job! Your solution is correct.' 
+          : 'Your solution needs some adjustments. Keep trying!'
+      }
+    }
+
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
     
     const prompt = `

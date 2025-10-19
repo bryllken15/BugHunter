@@ -4,6 +4,14 @@ import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Supabase is configured
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database not configured. Please set up environment variables.' },
+        { status: 503 }
+      )
+    }
+
     const body = await request.json()
     const { skill_level, course_type, user_weaknesses, previous_challenges } = body
 
