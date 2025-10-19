@@ -9,4 +9,18 @@ export const supabase = supabaseUrl.includes('placeholder')
   ? null 
   : createClient(supabaseUrl, supabaseAnonKey)
 
-export const createSupabaseClient = () => createClientComponentClient()
+export const createSupabaseClient = () => {
+  // Check if we're in a browser environment and have credentials
+  if (typeof window === 'undefined') {
+    return null
+  }
+  
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!url || !key || url.includes('placeholder')) {
+    return null
+  }
+  
+  return createClientComponentClient()
+}

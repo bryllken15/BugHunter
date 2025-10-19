@@ -63,6 +63,12 @@ export default function ChallengePage() {
 
   useEffect(() => {
     const loadData = async () => {
+      if (!supabase) {
+        console.warn('Supabase not configured')
+        setLoading(false)
+        return
+      }
+      
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
@@ -79,6 +85,12 @@ export default function ChallengePage() {
       })
       
       // Fetch challenge details
+      if (!supabase) {
+        console.warn('Supabase not configured')
+        setLoading(false)
+        return
+      }
+      
       const { data: challengeData, error: challengeError } = await supabase
         .from('challenges')
         .select('*')
@@ -99,7 +111,7 @@ export default function ChallengePage() {
   }, [challengeId, courseType, router, supabase])
 
   const handleChallengeComplete = async (xpEarned: number, timeTaken: number, hintsUsed: number) => {
-    if (!user || !challenge) return
+    if (!user || !challenge || !supabase) return
     
     setCompleting(true)
     

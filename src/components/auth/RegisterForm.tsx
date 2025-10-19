@@ -42,6 +42,12 @@ export function RegisterForm() {
     }
 
     try {
+      if (!supabase) {
+        setError('Authentication not configured. Please contact support.')
+        setLoading(false)
+        return
+      }
+      
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,

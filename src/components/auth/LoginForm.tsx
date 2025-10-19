@@ -23,6 +23,12 @@ export function LoginForm() {
     setError('')
 
     try {
+      if (!supabase) {
+        setError('Authentication not configured. Please contact support.')
+        setLoading(false)
+        return
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,

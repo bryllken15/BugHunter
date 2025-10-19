@@ -73,6 +73,12 @@ export default function CourseChallengesPage() {
 
   useEffect(() => {
     const loadData = async () => {
+      if (!supabase) {
+        console.warn('Supabase not configured')
+        setLoading(false)
+        return
+      }
+      
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
@@ -89,6 +95,12 @@ export default function CourseChallengesPage() {
       })
       
       // Fetch challenges for this course
+      if (!supabase) {
+        console.warn('Supabase not configured')
+        setLoading(false)
+        return
+      }
+      
       const { data: challengesData, error: challengesError } = await supabase
         .from('challenges')
         .select('*')
@@ -136,7 +148,7 @@ export default function CourseChallengesPage() {
       })
 
       const result = await response.json()
-      if (result.success) {
+      if (result.success && supabase) {
         // Refresh challenges
         const { data: challengesData } = await supabase
           .from('challenges')

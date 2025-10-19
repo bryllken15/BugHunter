@@ -32,6 +32,12 @@ export default function ChallengesPage() {
 
   useEffect(() => {
     const getUser = async () => {
+      if (!supabase) {
+        console.warn('Supabase not configured')
+        setLoading(false)
+        return
+      }
+      
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')

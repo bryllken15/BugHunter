@@ -37,6 +37,12 @@ export default function ProgressPage() {
 
   useEffect(() => {
     const loadData = async () => {
+      if (!supabase) {
+        console.warn('Supabase not configured')
+        setLoading(false)
+        return
+      }
+      
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
