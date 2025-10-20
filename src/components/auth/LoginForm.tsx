@@ -24,7 +24,9 @@ export function LoginForm() {
     setError('')
 
     try {
+      console.log('Supabase client:', supabase)
       if (!supabase) {
+        console.error('Supabase client is null')
         setError('Authentication not configured. Please contact support.')
         setLoading(false)
         return
@@ -43,12 +45,16 @@ export function LoginForm() {
       } else if (data.user) {
         console.log('Login successful, user:', data.user)
         // Use window.location for immediate redirect
-        window.location.href = '/dashboard'
+        setTimeout(() => {
+          window.location.href = '/dashboard'
+        }, 100)
+        return // Don't set loading to false since we're redirecting
       } else {
         console.log('No user in response')
         setError('Login failed - no user data received')
       }
     } catch (err) {
+      console.error('Login error:', err)
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)
