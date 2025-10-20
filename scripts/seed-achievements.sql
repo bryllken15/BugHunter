@@ -1,6 +1,24 @@
 -- Seed Initial Achievements for Bug Hunter
 -- Run this after creating the database schema
 
+-- Ensure a unique constraint exists on achievements.name for ON CONFLICT to work
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM   pg_indexes
+    WHERE  schemaname = 'public'
+    AND    indexname = 'achievements_name_key'
+  ) THEN
+    -- Try to add a unique constraint; if table already has it under a different name, this will fail harmlessly in Supabase UI context
+    BEGIN
+      ALTER TABLE achievements ADD CONSTRAINT achievements_name_key UNIQUE (name);
+    EXCEPTION WHEN duplicate_table THEN
+      -- ignore
+    END;
+  END IF;
+END$$;
+
 INSERT INTO achievements (name, description, icon, xp_reward, requirements) VALUES
 ('First Bug Fixed', 'Complete your first challenge', '🐛', 25, '{"challenges_completed": 1}'::jsonb),
 ('HTML Master', 'Complete 10 HTML challenges', '🌐', 100, '{"html_challenges": 10}'::jsonb),
