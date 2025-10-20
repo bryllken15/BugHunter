@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { ChallengeInterface } from '@/components/game/ChallengeInterface'
 import { Button } from '@/components/ui/Button'
-import { createSupabaseClient } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { updateUserProgress, checkAndAwardAchievements } from '@/lib/gamification'
 import { User } from '@/types'
 import { AchievementUnlock } from '@/components/game/AchievementUnlock'
@@ -61,7 +61,7 @@ export default function ChallengePage() {
 
   useEffect(() => {
     const loadData = async () => {
-      const supabase = createSupabaseClient()
+      const supabase = await getSupabase()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
@@ -112,7 +112,7 @@ export default function ChallengePage() {
   const handleChallengeComplete = async (xpEarned: number, timeTaken: number, hintsUsed: number) => {
     if (!user || !challenge) return
     
-    const supabase = createSupabaseClient()
+    const supabase = await getSupabase()
     if (!supabase) return
     
     setCompleting(true)

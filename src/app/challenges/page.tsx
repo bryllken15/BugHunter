@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { ProgressBar } from '@/components/ui/ProgressBar'
-import { createSupabaseClient } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { User, UserProgress } from '@/types'
 import { 
   Code, 
@@ -31,7 +31,7 @@ export default function ChallengesPage() {
 
   useEffect(() => {
     const getUser = async () => {
-      const supabase = createSupabaseClient()
+      const supabase = await getSupabase()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
