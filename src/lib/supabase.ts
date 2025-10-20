@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 // Global singleton instance to prevent multiple GoTrueClient instances
 let _supabase: any = null
+let _serverSupabase: any = null
 
 export const getSupabase = () => {
   if (typeof window === 'undefined') {
@@ -35,6 +36,42 @@ export const getSupabase = () => {
     return _supabase
   } catch (error) {
     console.warn('Failed to create Supabase client:', error)
+    return null
+  }
+}
+
+// Server-side Supabase client for API routes
+export const getServerSupabase = () => {
+  if (typeof window !== 'undefined') {
+    return null
+  }
+  
+  // Return existing instance if available
+  if (_serverSupabase) {
+    return _serverSupabase
+  }
+  
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!url || !key || url.includes('placeholder')) {
+    console.warn('Supabase credentials not configured for server')
+    return null
+  }
+  
+  try {
+    // Create server instance without auth storage
+    _serverSupabase = createClient(url, key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+    })
+    console.log('Server Supabase client created successfully')
+    return _serverSupabase
+  } catch (error) {
+    console.warn('Failed to create server Supabase client:', error)
     return null
   }
 }

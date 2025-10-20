@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt'
@@ -11,9 +11,7 @@ export const metadata: Metadata = {
   description: 'A gamified coding education platform inspired by Duolingo for learning HTML, CSS, and JavaScript through interactive bug-hunting challenges.',
   keywords: ['coding', 'education', 'HTML', 'CSS', 'JavaScript', 'learning', 'programming'],
   authors: [{ name: 'Bug Hunter Team' }],
-  viewport: 'width=device-width, initial-scale=1',
   manifest: '/manifest.json',
-  themeColor: '#2563EB',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -23,6 +21,12 @@ export const metadata: Metadata = {
     icon: '/Iconlogo.png',
     apple: '/Iconlogo.png',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#2563EB',
 }
 
 export default function RootLayout({
@@ -35,7 +39,6 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/Iconlogo.png" />
-        <meta name="theme-color" content="#2563EB" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Bug Hunter" />

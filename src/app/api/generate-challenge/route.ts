@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateChallenge } from '@/lib/ai'
-import { getSupabase } from '@/lib/supabase'
+import { getServerSupabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
     // Check if Supabase is configured
-    const supabase = getSupabase()
+    const supabase = getServerSupabase()
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database not configured. Please set up environment variables.' },
@@ -32,6 +32,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Map skill levels to database difficulty values
+    const difficultyMap: { [key: string]: string } = {
+      'beginner': 'easy',
+      'intermediate': 'medium',
+      'advanced': 'hard'
+    }
+    const difficulty = difficultyMap[skill_level]
+
     // Validate course type
     if (!['html', 'css', 'javascript'].includes(course_type)) {
       return NextResponse.json(
@@ -53,7 +61,7 @@ export async function POST(request: NextRequest) {
       .from('challenges')
       .insert({
         course_type,
-        difficulty: skill_level,
+        difficulty: difficulty,
         title: challenge.title,
         description: challenge.description,
         code_template: challenge.code_template,
@@ -90,7 +98,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Check if Supabase is configured
-    const supabase = getSupabase()
+    const supabase = getServerSupabase()
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database not configured. Please set up environment variables.' },
