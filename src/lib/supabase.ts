@@ -17,7 +17,13 @@ export const getSupabase = () => {
     }
     
     try {
-      _supabase = createClient(url, key)
+      _supabase = createClient(url, key, {
+        auth: {
+          storageKey: 'bh-auth',
+          persistSession: true,
+          autoRefreshToken: true,
+        },
+      })
     } catch (error) {
       console.warn('Failed to create Supabase client:', error)
       return null
@@ -44,8 +50,14 @@ export const createSupabaseClient = () => {
   }
   
   try {
-    // Use direct createClient instead of createClientComponentClient to avoid build issues
-    return createClient(url, key)
+    // Use direct createClient with the same storage key to avoid multiple auth clients
+    return createClient(url, key, {
+      auth: {
+        storageKey: 'bh-auth',
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
   } catch (error) {
     console.warn('Failed to create Supabase client component:', error)
     return null

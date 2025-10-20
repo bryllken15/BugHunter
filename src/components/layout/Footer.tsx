@@ -81,13 +81,13 @@ export function Footer() {
               © 2024 Bug Hunter. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/github" className="text-sm text-gray-500 hover:text-primary-600">
+              <Link href="https://github.com/" className="text-sm text-gray-500 hover:text-primary-600" target="_blank" rel="noopener noreferrer">
                 GitHub
               </Link>
-              <Link href="/twitter" className="text-sm text-gray-500 hover:text-primary-600">
+              <Link href="https://twitter.com/" className="text-sm text-gray-500 hover:text-primary-600" target="_blank" rel="noopener noreferrer">
                 Twitter
               </Link>
-              <Link href="/discord" className="text-sm text-gray-500 hover:text-primary-600">
+              <Link href="https://discord.com/" className="text-sm text-gray-500 hover:text-primary-600" target="_blank" rel="noopener noreferrer">
                 Discord
               </Link>
             </div>

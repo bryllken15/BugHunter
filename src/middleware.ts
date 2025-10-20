@@ -1,10 +1,26 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  
+  // Check if Supabase is configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+    // If Supabase is not configured, allow all routes
+    return res
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      storageKey: 'bh-auth',
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  })
 
   const {
     data: { session },

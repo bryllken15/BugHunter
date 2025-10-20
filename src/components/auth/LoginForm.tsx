@@ -110,7 +110,7 @@ export function LoginForm() {
               <input type="checkbox" className="rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
               <span className="ml-2 text-sm text-gray-600">Remember me</span>
             </label>
-            <Link href="/forgot-password" className="text-sm text-primary-600 hover:text-primary-500">
+            <Link href="#" className="text-sm text-primary-600 hover:text-primary-500" onClick={(e) => e.preventDefault()}>
               Forgot password?
             </Link>
           </div>

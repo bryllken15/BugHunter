@@ -74,12 +74,10 @@ export default function HomePage() {
             
             <div className="relative">
               <div className="relative w-full h-96 lg:h-[500px]">
-                <Image
+                <img
                   src="/Main Hero Image.png"
                   alt="Bug Hunter - Learn to code by hunting bugs. Interactive coding challenges with AI-powered learning and gamification features."
-                  fill
-                  className="object-contain"
-                  priority
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                 />
               </div>
             </div>

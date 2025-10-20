@@ -38,33 +38,39 @@ export default function DashboardPage() {
         setLoading(false)
         return
       }
-      
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
-        return
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          // ensure spinner doesn't hang if navigation is delayed
+          setLoading(false)
+          router.push('/login')
+          return
+        }
+
+        setUser({
+          id: user.id,
+          email: user.email || '',
+          display_name: user.user_metadata?.display_name,
+          skill_level: user.user_metadata?.skill_level,
+          created_at: user.created_at,
+          updated_at: user.updated_at || user.created_at
+        })
+
+        // Fetch user progress
+        const { data: progress } = await supabase
+          .from('user_progress')
+          .select('*')
+          .eq('user_id', user.id)
+
+        if (progress) {
+          setUserProgress(progress)
+        }
+      } catch (e) {
+        console.warn('Error loading dashboard:', e)
+      } finally {
+        setLoading(false)
       }
-      
-      setUser({
-        id: user.id,
-        email: user.email || '',
-        display_name: user.user_metadata?.display_name,
-        skill_level: user.user_metadata?.skill_level,
-        created_at: user.created_at,
-        updated_at: user.updated_at || user.created_at
-      })
-      
-      // Fetch user progress
-      const { data: progress } = await supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', user.id)
-      
-      if (progress) {
-        setUserProgress(progress)
-      }
-      
-      setLoading(false)
     }
     
     getUser()
