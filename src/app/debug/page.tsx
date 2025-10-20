@@ -11,11 +11,6 @@ export default function DebugPage() {
 
   useEffect(() => {
     setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    // Only run on client side
-    if (!mounted) return
     
     // Check current session and localStorage
     const checkSession = async () => {
@@ -51,7 +46,7 @@ All localStorage keys: ${allKeys.slice(0, 10).join(', ')}
       }
     }
     checkSession()
-  }, [mounted])
+  }, [])
 
   const testLogin = async () => {
     if (!mounted) return
@@ -99,10 +94,6 @@ Stored Data: ${stored ? 'EXISTS' : 'NONE'}
     }
   }
 
-  if (!mounted) {
-    return <div className="p-8">Loading...</div>
-  }
-
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Debug Page</h1>
@@ -113,11 +104,11 @@ Stored Data: ${stored ? 'EXISTS' : 'NONE'}
       </div>
       <div className="mb-4 p-4 bg-yellow-50 rounded">
         <h3 className="font-bold mb-2">Session Information:</h3>
-        <pre className="text-sm">{sessionInfo}</pre>
+        <pre className="text-sm">{mounted ? sessionInfo : 'Loading...'}</pre>
       </div>
       <button 
         onClick={testLogin}
-        disabled={loading}
+        disabled={loading || !mounted}
         className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
       >
         {loading ? 'Testing...' : 'Test Login'}
