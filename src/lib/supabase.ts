@@ -19,9 +19,10 @@ export const getSupabase = () => {
     try {
       _supabase = createClient(url, key, {
         auth: {
-          storageKey: 'bh-auth',
+          storageKey: 'sb-kagxizmnfjgcljbvsyzy-auth-token',
           persistSession: true,
           autoRefreshToken: true,
+          detectSessionInUrl: true,
         },
       })
     } catch (error) {
@@ -53,9 +54,10 @@ export const createSupabaseClient = () => {
     // Use direct createClient with the same storage key to avoid multiple auth clients
     return createClient(url, key, {
       auth: {
-        storageKey: 'bh-auth',
+        storageKey: 'sb-kagxizmnfjgcljbvsyzy-auth-token',
         persistSession: true,
         autoRefreshToken: true,
+        detectSessionInUrl: true,
       },
     })
   } catch (error) {

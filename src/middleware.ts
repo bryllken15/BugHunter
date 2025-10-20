@@ -16,9 +16,10 @@ export async function middleware(req: NextRequest) {
 
   const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: {
-      storageKey: 'bh-auth',
+      storageKey: 'sb-kagxizmnfjgcljbvsyzy-auth-token',
       persistSession: true,
       autoRefreshToken: true,
+      detectSessionInUrl: true,
     },
   })
 

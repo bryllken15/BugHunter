@@ -19,6 +19,7 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Form submitted with:', { email, password })
     setLoading(true)
     setError('')
 
@@ -34,11 +35,18 @@ export function LoginForm() {
         password,
       })
 
+      console.log('Login response:', { data, error })
+
       if (error) {
+        console.error('Login error:', error)
         setError(error.message)
       } else if (data.user) {
-        router.push('/dashboard')
-        router.refresh()
+        console.log('Login successful, user:', data.user)
+        // Use window.location for immediate redirect
+        window.location.href = '/dashboard'
+      } else {
+        console.log('No user in response')
+        setError('Login failed - no user data received')
       }
     } catch (err) {
       setError('An unexpected error occurred')
