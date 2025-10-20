@@ -1,46 +1,28 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Single instance pattern to prevent multiple GoTrueClient instances
+// Global singleton instance to prevent multiple GoTrueClient instances
 let _supabase: any = null
-let _isInitializing = false
 
 export const getSupabase = () => {
   if (typeof window === 'undefined') {
     return null
   }
   
+  // Return existing instance if available
   if (_supabase) {
     return _supabase
   }
-  
-  if (_isInitializing) {
-    // Wait for initialization to complete
-    return new Promise((resolve) => {
-      const checkInit = () => {
-        if (_supabase) {
-          resolve(_supabase)
-        } else if (!_isInitializing) {
-          resolve(null)
-        } else {
-          setTimeout(checkInit, 100)
-        }
-      }
-      checkInit()
-    })
-  }
-  
-  _isInitializing = true
   
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
   if (!url || !key || url.includes('placeholder')) {
     console.warn('Supabase credentials not configured')
-    _isInitializing = false
     return null
   }
   
   try {
+    // Create single instance with consistent configuration
     _supabase = createClient(url, key, {
       auth: {
         storageKey: 'sb-kagxizmnfjgcljbvsyzy-auth-token',
@@ -49,12 +31,10 @@ export const getSupabase = () => {
         detectSessionInUrl: true,
       },
     })
-    console.log('Supabase client created successfully')
-    _isInitializing = false
+    console.log('Supabase client created successfully (singleton)')
     return _supabase
   } catch (error) {
     console.warn('Failed to create Supabase client:', error)
-    _isInitializing = false
     return null
   }
 }

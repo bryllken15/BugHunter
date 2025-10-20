@@ -61,7 +61,7 @@ export default function ChallengePage() {
 
   useEffect(() => {
     const loadData = async () => {
-      const supabase = await getSupabase()
+      const supabase = getSupabase()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
@@ -112,7 +112,7 @@ export default function ChallengePage() {
   const handleChallengeComplete = async (xpEarned: number, timeTaken: number, hintsUsed: number) => {
     if (!user || !challenge) return
     
-    const supabase = await getSupabase()
+    const supabase = getSupabase()
     if (!supabase) return
     
     setCompleting(true)

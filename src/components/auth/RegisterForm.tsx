@@ -41,7 +41,7 @@ export function RegisterForm() {
     }
 
     try {
-      const supabase = await getSupabase()
+      const supabase = getSupabase()
       if (!supabase) {
         setError('Authentication not configured. Please contact support.')
         setLoading(false)

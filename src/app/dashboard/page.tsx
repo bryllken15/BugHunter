@@ -32,7 +32,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const getUser = async () => {
-      const supabase = await getSupabase()
+      const supabase = getSupabase()
       console.log('Dashboard - Getting user, supabase client:', supabase)
       
       if (!supabase) {

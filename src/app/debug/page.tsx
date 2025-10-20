@@ -14,7 +14,7 @@ export default function DebugPage() {
     
     // Check current session and localStorage
     const checkSession = async () => {
-      const supabase = await getSupabase()
+      const supabase = getSupabase()
       if (supabase) {
         const { data: { session } } = await supabase.auth.getSession()
         const storageKey = 'sb-kagxizmnfjgcljbvsyzy-auth-token'
@@ -55,7 +55,7 @@ All localStorage keys: ${allKeys.slice(0, 10).join(', ')}
     setResult('Testing...')
     
     try {
-      const supabase = await getSupabase()
+      const supabase = getSupabase()
       console.log('Supabase client:', supabase)
       
       if (!supabase) {

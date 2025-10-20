@@ -36,7 +36,7 @@ export default function ProgressPage() {
 
   useEffect(() => {
     const loadData = async () => {
-      const supabase = await getSupabase()
+      const supabase = getSupabase()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
