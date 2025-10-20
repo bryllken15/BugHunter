@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Badge } from '@/components/ui/Badge'
-import { createSupabaseClient } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { User, UserProgress } from '@/types'
 import { PageLoading, CardSkeleton } from '@/components/LoadingSpinner'
 import { 
@@ -29,10 +29,12 @@ export default function DashboardPage() {
   const [userProgress, setUserProgress] = useState<UserProgress[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createSupabaseClient()
+  const supabase = getSupabase()
 
   useEffect(() => {
     const getUser = async () => {
+      console.log('Dashboard - Getting user, supabase client:', supabase)
+      
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
@@ -40,9 +42,22 @@ export default function DashboardPage() {
       }
 
       try {
+        // First check if we have a session
+        const { data: { session } } = await supabase.auth.getSession()
+        console.log('Dashboard - Session:', session ? 'EXISTS' : 'NONE')
+        
+        if (!session) {
+          console.log('Dashboard - No session, redirecting to login')
+          setLoading(false)
+          router.push('/login')
+          return
+        }
+
         const { data: { user } } = await supabase.auth.getUser()
+        console.log('Dashboard - User:', user ? user.email : 'NONE')
+        
         if (!user) {
-          // ensure spinner doesn't hang if navigation is delayed
+          console.log('Dashboard - No user, redirecting to login')
           setLoading(false)
           router.push('/login')
           return

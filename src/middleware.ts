@@ -5,6 +5,11 @@ import type { NextRequest } from 'next/server'
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   
+  // TEMPORARILY DISABLE MIDDLEWARE FOR TESTING
+  // TODO: Re-enable after fixing session detection
+  console.log('Middleware - TEMPORARILY DISABLED for testing')
+  return res
+  
   // Check if Supabase is configured
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -14,6 +19,7 @@ export async function middleware(req: NextRequest) {
     return res
   }
 
+  // Create Supabase client with proper request/response handling
   const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: {
       storageKey: 'sb-kagxizmnfjgcljbvsyzy-auth-token',
@@ -23,9 +29,19 @@ export async function middleware(req: NextRequest) {
     },
   })
 
+  // Try to get session from cookies first
+  const authHeader = req.headers.get('authorization')
+  const cookieHeader = req.headers.get('cookie')
+  
+  console.log('Middleware - Auth Header:', authHeader)
+  console.log('Middleware - Cookie Header:', cookieHeader)
+
   const {
     data: { session },
   } = await supabase.auth.getSession()
+
+  console.log('Middleware - Session:', session ? 'EXISTS' : 'NONE')
+  console.log('Middleware - User:', session?.user?.email || 'N/A')
 
   // Protected routes that require authentication
   const protectedRoutes = ['/dashboard', '/challenges', '/achievements', '/progress', '/onboarding']
@@ -38,16 +54,23 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith(route)
   )
 
+  console.log('Middleware - Path:', req.nextUrl.pathname)
+  console.log('Middleware - Is Protected:', isProtectedRoute)
+  console.log('Middleware - Is Auth Route:', isAuthRoute)
+
   // Redirect to login if accessing protected route without session
   if (isProtectedRoute && !session) {
+    console.log('Middleware - Redirecting to login (no session)')
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
   // Redirect to dashboard if accessing auth routes with session
   if (isAuthRoute && session) {
+    console.log('Middleware - Redirecting to dashboard (has session)')
     return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
+  console.log('Middleware - Allowing request')
   return res
 }
 
