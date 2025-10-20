@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
-import { createSupabaseClient } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export function LoginForm() {
@@ -15,7 +15,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const supabase = createSupabaseClient()
+  const supabase = getSupabase()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,11 +23,18 @@ export function LoginForm() {
     setLoading(true)
     setError('')
 
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      setLoading(false)
+      setError('Login timed out. Please try again.')
+    }, 10000) // 10 second timeout
+
     try {
       console.log('Supabase client:', supabase)
       if (!supabase) {
         console.error('Supabase client is null')
         setError('Authentication not configured. Please contact support.')
+        clearTimeout(timeoutId)
         setLoading(false)
         return
       }
@@ -41,9 +48,11 @@ export function LoginForm() {
 
       if (error) {
         console.error('Login error:', error)
+        clearTimeout(timeoutId)
         setError(error.message)
       } else if (data.user) {
         console.log('Login successful, user:', data.user)
+        clearTimeout(timeoutId)
         // Use window.location for immediate redirect
         setTimeout(() => {
           window.location.href = '/dashboard'
@@ -51,12 +60,15 @@ export function LoginForm() {
         return // Don't set loading to false since we're redirecting
       } else {
         console.log('No user in response')
+        clearTimeout(timeoutId)
         setError('Login failed - no user data received')
       }
     } catch (err) {
       console.error('Login error:', err)
+      clearTimeout(timeoutId)
       setError('An unexpected error occurred')
     } finally {
+      clearTimeout(timeoutId)
       setLoading(false)
     }
   }
