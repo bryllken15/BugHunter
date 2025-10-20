@@ -7,6 +7,11 @@ export default function DebugPage() {
   const [result, setResult] = useState('')
   const [loading, setLoading] = useState(false)
   const [sessionInfo, setSessionInfo] = useState('')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     // Check current session and localStorage
@@ -17,11 +22,28 @@ export default function DebugPage() {
         const storageKey = 'sb-kagxizmnfjgcljbvsyzy-auth-token'
         const stored = localStorage.getItem(storageKey)
         
+        // Check all localStorage keys that might contain session data
+        const allKeys = Object.keys(localStorage)
+        const supabaseKeys = allKeys.filter(key => key.includes('supabase') || key.includes('sb-'))
+        
+        // Parse the stored session data
+        let parsedSession = null
+        if (stored) {
+          try {
+            parsedSession = JSON.parse(stored)
+          } catch (e) {
+            console.error('Error parsing stored session:', e)
+          }
+        }
+        
         setSessionInfo(`
 Current Session: ${session ? 'EXISTS' : 'NONE'}
 User: ${session?.user?.email || 'N/A'}
 Storage Key: ${storageKey}
 Stored Data: ${stored ? 'EXISTS' : 'NONE'}
+Stored User: ${parsedSession?.user?.email || 'N/A'}
+All Supabase Keys: ${supabaseKeys.join(', ')}
+All localStorage keys: ${allKeys.slice(0, 10).join(', ')}
         `)
       }
     }
@@ -70,6 +92,10 @@ Stored Data: ${stored ? 'EXISTS' : 'NONE'}
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!mounted) {
+    return <div className="p-8">Loading...</div>
   }
 
   return (

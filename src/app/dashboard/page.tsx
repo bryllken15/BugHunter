@@ -45,6 +45,7 @@ export default function DashboardPage() {
         // First check if we have a session
         const { data: { session } } = await supabase.auth.getSession()
         console.log('Dashboard - Session:', session ? 'EXISTS' : 'NONE')
+        console.log('Dashboard - Session user:', session?.user?.email || 'NONE')
         
         if (!session) {
           console.log('Dashboard - No session, redirecting to login')
