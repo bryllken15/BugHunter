@@ -14,6 +14,9 @@ export default function DebugPage() {
   }, [])
 
   useEffect(() => {
+    // Only run on client side
+    if (!mounted) return
+    
     // Check current session and localStorage
     const checkSession = async () => {
       const supabase = getSupabase()
@@ -48,9 +51,11 @@ All localStorage keys: ${allKeys.slice(0, 10).join(', ')}
       }
     }
     checkSession()
-  }, [])
+  }, [mounted])
 
   const testLogin = async () => {
+    if (!mounted) return
+    
     setLoading(true)
     setResult('Testing...')
     

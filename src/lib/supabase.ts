@@ -13,6 +13,7 @@ export const getSupabase = () => {
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
     if (!url || !key || url.includes('placeholder')) {
+      console.warn('Supabase credentials not configured')
       return null
     }
     
@@ -25,6 +26,7 @@ export const getSupabase = () => {
           detectSessionInUrl: true,
         },
       })
+      console.log('Supabase client created successfully')
     } catch (error) {
       console.warn('Failed to create Supabase client:', error)
       return null
