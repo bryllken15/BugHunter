@@ -33,10 +33,10 @@ export default function ProgressPage() {
   const [challengeAttempts, setChallengeAttempts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createSupabaseClient()
 
   useEffect(() => {
     const loadData = async () => {
+      const supabase = createSupabaseClient()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
@@ -84,7 +84,7 @@ export default function ProgressPage() {
     }
     
     loadData()
-  }, [router, supabase])
+  }, [router])
 
   if (loading) {
     return (

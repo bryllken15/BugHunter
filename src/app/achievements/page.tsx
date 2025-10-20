@@ -48,10 +48,10 @@ export default function AchievementsPage() {
   const [userProgress, setUserProgress] = useState<UserProgress[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createSupabaseClient()
 
   useEffect(() => {
     const loadData = async () => {
+      const supabase = createSupabaseClient()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
@@ -115,7 +115,7 @@ export default function AchievementsPage() {
     }
     
     loadData()
-  }, [router, supabase])
+  }, [router])
 
   if (loading) {
     return (

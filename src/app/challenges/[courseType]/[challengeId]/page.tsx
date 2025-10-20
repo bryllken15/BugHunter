@@ -50,8 +50,6 @@ export default function ChallengePage() {
   const [completing, setCompleting] = useState(false)
   const [newAchievement, setNewAchievement] = useState<any>(null)
   const [showAchievement, setShowAchievement] = useState(false)
-  
-  const supabase = createSupabaseClient()
 
   const courseInfo = {
     html: { name: 'HTML', icon: Code, color: 'orange' },
@@ -63,6 +61,7 @@ export default function ChallengePage() {
 
   useEffect(() => {
     const loadData = async () => {
+      const supabase = createSupabaseClient()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
@@ -108,10 +107,13 @@ export default function ChallengePage() {
     }
     
     loadData()
-  }, [challengeId, courseType, router, supabase])
+  }, [challengeId, courseType, router])
 
   const handleChallengeComplete = async (xpEarned: number, timeTaken: number, hintsUsed: number) => {
-    if (!user || !challenge || !supabase) return
+    if (!user || !challenge) return
+    
+    const supabase = createSupabaseClient()
+    if (!supabase) return
     
     setCompleting(true)
     

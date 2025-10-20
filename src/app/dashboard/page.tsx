@@ -29,10 +29,10 @@ export default function DashboardPage() {
   const [userProgress, setUserProgress] = useState<UserProgress[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = getSupabase()
 
   useEffect(() => {
     const getUser = async () => {
+      const supabase = getSupabase()
       console.log('Dashboard - Getting user, supabase client:', supabase)
       
       if (!supabase) {
@@ -90,7 +90,7 @@ export default function DashboardPage() {
     }
     
     getUser()
-  }, [router, supabase])
+  }, [router])
 
   if (loading) {
     return <PageLoading message="Loading your dashboard..." />

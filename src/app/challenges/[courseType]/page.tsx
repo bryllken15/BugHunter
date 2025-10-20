@@ -45,8 +45,6 @@ export default function CourseChallengesPage() {
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null)
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
-  
-  const supabase = createSupabaseClient()
 
   const courseInfo = {
     html: {
@@ -73,6 +71,7 @@ export default function CourseChallengesPage() {
 
   useEffect(() => {
     const loadData = async () => {
+      const supabase = createSupabaseClient()
       if (!supabase) {
         console.warn('Supabase not configured')
         setLoading(false)
@@ -129,7 +128,7 @@ export default function CourseChallengesPage() {
     }
     
     loadData()
-  }, [courseType, router, supabase])
+  }, [courseType, router])
 
   const generateRandomChallenge = async () => {
     setGenerating(true)
